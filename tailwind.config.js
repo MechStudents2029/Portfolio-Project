@@ -4,24 +4,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        sky: {
-          start: "#2b6fff",
-          mid: "#46c2ff",
-          end: "#8ee8ff",
-        },
-        ink: "#05070d",
+        paper: "#efe8d8",
+        ink: "#161410",
+        mute: "#6b6458",
+        cadmium: "#e24a12",
+        mill: "#12110e",
       },
       fontFamily: {
-        sf: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"SF Pro Display"',
-          '"Helvetica Neue"',
-          "sans-serif",
-        ],
-      },
-      backgroundImage: {
-        "sky-gradient": "linear-gradient(135deg, #2b6fff 0%, #46c2ff 55%, #8ee8ff 100%)",
+        display: ["var(--font-display)", "sans-serif"],
+        sans: ["var(--font-sans)", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
     },
   },

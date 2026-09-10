@@ -6,7 +6,7 @@ const RoboticHandScene = dynamic(() => import("./RoboticHandScene"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="h-16 w-16 animate-pulse rounded-full bg-gradient-to-br from-sky-start via-sky-mid to-sky-end opacity-40 blur-md" />
+      <div className="h-12 w-12 border border-cadmium/60" />
     </div>
   ),
 });

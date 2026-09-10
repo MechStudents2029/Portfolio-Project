@@ -3,74 +3,72 @@
 import { motion } from "framer-motion";
 import ProjectIcon from "./ProjectIcon";
 
-function ProjectCard({ project, index }) {
+function ProjectRow({ project, index }) {
+  const n = String(index + 1).padStart(2, "0");
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.article
+      initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay: (index % 3) * 0.08 }}
-      whileHover={{ y: -6, rotateX: -4, rotateY: 4, scale: 1.02 }}
-      style={{ transformPerspective: 900 }}
-      className="group flex flex-col justify-between rounded-[20px] border border-slate-100 bg-white p-6 shadow-[0_2px_10px_rgba(15,23,42,0.04)] transition-shadow hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)]"
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.4, delay: (index % 4) * 0.04 }}
+      className="group grid grid-cols-[auto_1fr] gap-4 border-b border-ink py-6 sm:grid-cols-[3.5rem_auto_1fr_auto] sm:items-start sm:gap-6"
     >
+      <span className="font-mono text-[11px] text-cadmium">{n}</span>
+      <div className="hidden sm:block">
+        <ProjectIcon kind={project.icon} />
+      </div>
       <div>
-        <div className="flex items-start justify-between">
-          <h3 className="font-sf text-[17px] font-semibold tracking-tight text-slate-900">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="font-display text-[26px] font-bold uppercase leading-none tracking-tight text-ink">
             {project.name}
           </h3>
-          <ProjectIcon kind={project.icon} />
+          <div className="sm:hidden">
+            <ProjectIcon kind={project.icon} />
+          </div>
         </div>
-        <p className="mt-1.5 font-sf text-[13.5px] leading-relaxed text-slate-500">
-          {project.oneLiner}
+        <p className="mt-2 max-w-xl font-sans text-[14px] leading-relaxed text-mute">{project.oneLiner}</p>
+        <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/55">
+          {project.stack.join("  ·  ")}
         </p>
-
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {project.stack.map((s) => (
-            <span
-              key={s}
-              className="rounded-full bg-slate-50 px-2.5 py-1 font-sf text-[11px] font-medium text-slate-500"
-            >
-              {s}
-            </span>
-          ))}
-        </div>
       </div>
-
-      <div className="mt-6">
+      <div className="col-span-2 self-center sm:col-span-1 sm:pt-1">
         {project.link ? (
           <a
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-sf text-[13px] font-semibold text-sky-start transition-transform group-hover:translate-x-0.5"
+            className="inline-block font-mono text-[11px] uppercase tracking-[0.16em] text-ink underline decoration-cadmium decoration-2 underline-offset-4 transition-colors group-hover:text-cadmium"
           >
-            View Repo <span aria-hidden>→</span>
+            Open repo
           </a>
         ) : (
-          <span className="font-sf text-[12.5px] font-medium text-slate-300">
-            Private / internal repo
-          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/30">Private</span>
         )}
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
 export default function Projects({ projects }) {
   return (
-    <section id="projects" className="bg-slate-50/60 px-6 py-28 sm:px-10">
+    <section id="projects" className="border-t border-ink bg-paper px-5 py-24 sm:px-8">
       <div className="mx-auto max-w-6xl">
-        <p className="font-sf text-[13px] font-semibold uppercase tracking-[0.14em] text-sky-start">
-          Projects
-        </p>
-        <h2 className="mt-3 max-w-xl font-sf text-[28px] font-bold leading-snug tracking-tight text-slate-900 sm:text-[32px]">
-          Real things I've built — hardware, agents, and everything between.
-        </h2>
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-6">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-cadmium">01 — Projects</p>
+            <h2 className="mt-3 max-w-lg font-display text-[42px] font-extrabold uppercase leading-[0.9] tracking-tight text-ink sm:text-[52px]">
+              Hardware, agents, and the bits between.
+            </h2>
+          </div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-mute">
+            {String(projects.length).padStart(2, "0")} entries
+          </p>
+        </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
           {projects.map((p, i) => (
-            <ProjectCard key={p.name} project={p} index={i} />
+            <ProjectRow key={p.name} project={p} index={i} />
           ))}
         </div>
       </div>

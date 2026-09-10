@@ -3,49 +3,53 @@
 import { motion } from "framer-motion";
 
 const STATS = [
-  { label: "NYU Tandon", detail: "CS + Mechanical Engineering" },
-  { label: "6× Hackathon Wins", detail: "Full-stack + AI agents under deadline" },
-  { label: "Growth-Minded", detail: "500K+ views, 15 businesses onboarded (Tarjam)" },
-  { label: "Founder-track", detail: "Building toward a robotics company" },
+  { n: "01", label: "NYU Tandon", detail: "CS + Mechanical Engineering" },
+  { n: "02", label: "6× Hackathon Wins", detail: "Full-stack + AI agents under deadline" },
+  { n: "03", label: "Growth-minded", detail: "500K+ views, 15 businesses onboarded (Tarjam)" },
+  { n: "04", label: "Founder-track", detail: "Building toward a robotics company" },
 ];
 
 export default function About({ profile }) {
   return (
-    <section id="about" className="bg-white px-6 py-28 sm:px-10">
-      <div className="mx-auto max-w-4xl">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-          className="font-sf text-[13px] font-semibold uppercase tracking-[0.14em] text-sky-start"
-        >
-          About
-        </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.05 }}
-          className="mt-3 max-w-2xl font-sf text-[28px] font-bold leading-snug tracking-tight text-slate-900 sm:text-[32px]"
-        >
-          {profile.focus}
-        </motion.h2>
+    <section id="about" className="border-t border-ink bg-paper px-5 py-24 sm:px-8">
+      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-12">
+        <div className="md:col-span-4">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-cadmium">02 — About</p>
+          <h2 className="mt-4 font-display text-[42px] font-extrabold uppercase leading-[0.9] tracking-tight text-ink sm:text-[52px]">
+            Specs
+          </h2>
+        </div>
+        <div className="md:col-span-8">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.45 }}
+            className="max-w-2xl font-sans text-[17px] leading-relaxed text-ink"
+          >
+            {profile.focus}
+          </motion.p>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {STATS.map((s, i) => (
-            <motion.div
-              key={s.label}
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="rounded-2xl border border-slate-100 bg-slate-50/70 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-            >
-              <p className="font-sf text-[15px] font-semibold text-slate-900">{s.label}</p>
-              <p className="mt-1 font-sf text-[13px] text-slate-500">{s.detail}</p>
-            </motion.div>
-          ))}
+          <div className="mt-10 divide-y divide-ink border-y border-ink">
+            {STATS.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.35, delay: i * 0.05 }}
+                className="grid grid-cols-[3rem_1fr] items-baseline gap-4 py-4 sm:grid-cols-[4rem_1fr_1.4fr]"
+              >
+                <span className="font-mono text-[11px] text-cadmium">{s.n}</span>
+                <p className="font-display text-[22px] font-bold uppercase leading-none tracking-tight text-ink">
+                  {s.label}
+                </p>
+                <p className="col-span-2 font-sans text-[14px] text-mute sm:col-span-1 sm:text-right">
+                  {s.detail}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

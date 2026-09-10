@@ -4,23 +4,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 const SUGGESTIONS = [
-  "What's your coolest project?",
-  "Tell me about the robotic arm",
-  "What's Tarjam?",
-  "Are you hiring-ready?",
+  { id: "Q-01", text: "What's your coolest project?" },
+  { id: "Q-02", text: "Tell me about the robotic arm" },
+  { id: "Q-03", text: "What's Tarjam?" },
+  { id: "Q-04", text: "Are you hiring-ready?" },
 ];
 
 const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      role: "bot",
-      text: `Hey, I'm an AI version of ${name}. Ask me about any of my projects, hackathons, or what I'm building toward.`,
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
+  const inputRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     openWidget: () => setOpen(true),
@@ -29,6 +25,13 @@ const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages, loading, open]);
+
+  useEffect(() => {
+    if (open) {
+      const t = setTimeout(() => inputRef.current?.focus(), 80);
+      return () => clearTimeout(t);
+    }
+  }, [open]);
 
   async function send(text) {
     const userText = (text ?? input).trim();
@@ -43,138 +46,210 @@ const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: nextMessages.map((m) => ({
-            role: m.role === "user" ? "user" : "assistant",
-            content: m.text,
-          })),
+          messages: nextMessages
+            .filter((m) => m.role === "user" || m.role === "bot")
+            .map((m) => ({
+              role: m.role === "user" ? "user" : "assistant",
+              content: m.text,
+            })),
         }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setMessages((m) => [
+          ...m,
+          { role: "error", text: data.reply || `Fault ${res.status} — channel refused the query.` },
+        ]);
+        return;
+      }
       setMessages((m) => [
         ...m,
-        { role: "bot", text: data.reply || "Something went wrong — try again." },
+        { role: "bot", text: data.reply || "Empty reply from the mill. Try another query." },
       ]);
-    } catch (e) {
-      setMessages((m) => [...m, { role: "bot", text: "Network error — try again." }]);
+    } catch {
+      setMessages((m) => [
+        ...m,
+        { role: "error", text: "Line down — network fault. Recheck the connection and send again." },
+      ]);
     } finally {
       setLoading(false);
     }
   }
 
+  const empty = messages.length === 0 && !loading;
+
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end sm:bottom-6 sm:right-6">
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className="mb-4 flex h-[min(70vh,520px)] w-[min(90vw,380px)] flex-col overflow-hidden rounded-[22px] border border-white/15 bg-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.25)] backdrop-blur-2xl"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="mb-3 flex h-[min(78vh,560px)] w-[min(calc(100vw-2rem),420px)] flex-col border border-ink bg-paper shadow-[6px_6px_0_0_#161410]"
+            role="dialog"
+            aria-label={`Ask ${name}`}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-              <div>
-                <p className="font-sf text-[14px] font-semibold text-slate-900">
-                  Ask {name}
-                </p>
-                <p className="font-sf text-[11.5px] text-slate-400">
-                  Only knows real things I've built
-                </p>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                aria-label="Close chat"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                </svg>
-              </button>
-            </div>
-
-            <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
-              {messages.map((m, i) => (
-                <div
-                  key={i}
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 font-sf text-[13px] leading-relaxed ${
-                    m.role === "user"
-                      ? "ml-auto bg-gradient-to-br from-sky-start to-sky-mid text-white"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                >
-                  {m.text}
+            <header className="flex items-center justify-between border-b border-ink bg-mill px-3 py-2.5">
+              <div className="flex items-center gap-3">
+                <span className="h-2 w-2 bg-cadmium" aria-hidden />
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-cadmium">
+                    Comms · CH-07
+                  </p>
+                  <p className="font-display text-[20px] font-bold uppercase leading-none tracking-tight text-paper">
+                    Ask {name}
+                  </p>
                 </div>
-              ))}
-              {loading && (
-                <div className="w-fit rounded-2xl bg-slate-100 px-3.5 py-2.5">
-                  <span className="flex gap-1">
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.2s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.1s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" />
-                  </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {messages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setMessages([])}
+                    className="font-mono text-[10px] uppercase tracking-[0.16em] text-paper/50 hover:text-cadmium"
+                  >
+                    Clear
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close chat"
+                  className="flex h-8 w-8 items-center justify-center border border-paper/25 text-paper/70 hover:border-cadmium hover:text-cadmium"
+                >
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                    <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.6" />
+                  </svg>
+                </button>
+              </div>
+            </header>
+
+            <p className="border-b border-ink bg-paper px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
+              Ground truth only · no invented specs
+            </p>
+
+            <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
+              {empty ? (
+                <div className="flex h-full flex-col justify-between p-4">
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cadmium">Log empty</p>
+                    <h3 className="mt-2 font-display text-[34px] font-extrabold uppercase leading-[0.88] tracking-tight text-ink">
+                      Channel open.
+                    </h3>
+                    <p className="mt-3 max-w-[18rem] font-sans text-[13px] leading-relaxed text-mute">
+                      Query the drawing. I only know projects, hackathons, and what {name} is actually building.
+                    </p>
+                  </div>
+                  <ul className="mt-6 divide-y divide-ink border-y border-ink">
+                    {SUGGESTIONS.map((s) => (
+                      <li key={s.id}>
+                        <button
+                          type="button"
+                          onClick={() => send(s.text)}
+                          className="flex w-full items-baseline justify-between gap-3 py-2.5 text-left hover:text-cadmium"
+                        >
+                          <span className="font-mono text-[10px] text-cadmium">{s.id}</span>
+                          <span className="flex-1 font-sans text-[13px] text-ink">{s.text}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="space-y-0">
+                  {messages.map((m, i) => {
+                    const isUser = m.role === "user";
+                    const isError = m.role === "error";
+                    const tag = isUser ? "YOU" : isError ? "FAULT" : "SYS";
+                    return (
+                      <article
+                        key={`${tag}-${i}`}
+                        className={`border-b border-ink px-3 py-3 ${isError ? "bg-cadmium/10" : isUser ? "bg-ink/[0.03]" : "bg-paper"}`}
+                      >
+                        <div className="mb-1.5 flex items-center justify-between">
+                          <span
+                            className={`font-mono text-[10px] uppercase tracking-[0.18em] ${
+                              isUser ? "text-ink" : "text-cadmium"
+                            }`}
+                          >
+                            {tag} · {String(i + 1).padStart(2, "0")}
+                          </span>
+                          {isError && (
+                            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-cadmium">
+                              retry from input
+                            </span>
+                          )}
+                        </div>
+                        <p className="font-sans text-[13.5px] leading-relaxed text-ink">{m.text}</p>
+                      </article>
+                    );
+                  })}
+                  {loading && (
+                    <div className="border-b border-ink px-3 py-3">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cadmium">
+                        Mill · waiting
+                      </p>
+                      <p className="mt-2 flex items-center gap-2 font-mono text-[12px] text-mute">
+                        <span className="inline-block h-2 w-2 animate-pulse bg-cadmium" />
+                        Cutting a reply…
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
 
-            {messages.length < 2 && (
-              <div className="flex flex-wrap gap-1.5 px-5 pb-2">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => send(s)}
-                    className="rounded-full border border-slate-200 px-2.5 py-1 font-sf text-[11px] font-medium text-slate-500 transition-colors hover:border-sky-mid hover:text-sky-start"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div className="flex items-center gap-2 border-t border-slate-100 px-4 py-3">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                send();
+              }}
+              className="flex border-t border-ink"
+            >
+              <label htmlFor="comms-input" className="sr-only">
+                Ask a question
+              </label>
               <input
+                id="comms-input"
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder="Ask a question..."
+                placeholder="Type a query…"
                 disabled={loading}
-                className="flex-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 font-sf text-[13px] text-slate-800 outline-none focus:border-sky-mid disabled:opacity-60"
+                className="min-w-0 flex-1 bg-paper px-3 py-3 font-sans text-[14px] text-ink outline-none placeholder:text-mute/70 disabled:opacity-50"
               />
               <button
-                onClick={() => send()}
-                disabled={loading}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-start to-sky-mid text-white disabled:opacity-50"
-                aria-label="Send"
+                type="submit"
+                disabled={loading || !input.trim()}
+                className="shrink-0 bg-cadmium px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-paper disabled:bg-ink/20 disabled:text-ink/40"
               >
-                <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
-                  <path d="M2 10L18 2L11 18L9 11L2 10Z" fill="currentColor" />
-                </svg>
+                Send
               </button>
-            </div>
+            </form>
           </motion.div>
         )}
       </AnimatePresence>
 
       <motion.button
+        type="button"
         onClick={() => setOpen((v) => !v)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.96 }}
+        whileHover={{ x: 1, y: -1 }}
+        whileTap={{ x: 0, y: 0 }}
+        aria-expanded={open}
         aria-label={open ? "Close chat" : "Open chat"}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-sky-start via-sky-mid to-sky-end text-white shadow-[0_10px_30px_rgba(43,111,255,0.4)]"
+        className="flex items-center gap-3 border border-ink bg-cadmium px-3 py-2.5 text-left text-paper shadow-[4px_4px_0_0_#161410]"
       >
-        {open ? (
-          <svg width="18" height="18" viewBox="0 0 14 14" fill="none">
-            <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-          </svg>
-        ) : (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-4 4v-4H6a2 2 0 0 1-2-2V5Z"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
+        <span className={`h-2 w-2 bg-paper ${open ? "" : "animate-pulse"}`} />
+        <span>
+          <span className="block font-mono text-[10px] uppercase tracking-[0.2em] opacity-80">
+            {open ? "Close channel" : "Comms live"}
+          </span>
+          <span className="font-display text-[18px] font-bold uppercase leading-none tracking-tight">
+            {open ? "Hang up" : "Ask Adam"}
+          </span>
+        </span>
       </motion.button>
     </div>
   );

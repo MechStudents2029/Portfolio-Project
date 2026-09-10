@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 
 const LINKS = [
-  { href: "#projects", label: "Projects" },
-  { href: "#about", label: "About" },
-  { href: "#hackathons", label: "Hackathons" },
-  { href: "#contact", label: "Contact" },
+  { href: "#projects", label: "01 Projects" },
+  { href: "#about", label: "02 About" },
+  { href: "#hackathons", label: "03 Hackathons" },
+  { href: "#contact", label: "04 Contact" },
 ];
 
 export default function Nav({ name }) {
@@ -22,33 +22,39 @@ export default function Nav({ name }) {
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-40 flex items-center justify-between px-6 py-4 transition-all duration-300 sm:px-10 ${
-        scrolled
-          ? "border-b border-black/5 bg-white/70 shadow-[0_1px_20px_rgba(0,0,0,0.05)] backdrop-blur-xl"
-          : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-3 transition-colors duration-200 sm:px-8 ${
+        scrolled ? "border-b border-ink bg-paper" : "border-b border-transparent bg-transparent"
       }`}
     >
       <a
         href="#top"
-        className={`font-sf text-[15px] font-semibold tracking-tight transition-colors ${
-          scrolled ? "text-slate-900" : "text-white"
+        className={`font-mono text-[11px] uppercase tracking-[0.22em] ${
+          scrolled ? "text-ink" : "text-paper"
         }`}
       >
-        {name}
+        {name} / DWG-01
       </a>
-      <div className="flex items-center gap-7">
+      <div className="hidden items-center gap-6 sm:flex">
         {LINKS.map((l) => (
           <a
             key={l.href}
             href={l.href}
-            className={`font-sf text-[13px] font-medium transition-colors ${
-              scrolled ? "text-slate-600 hover:text-slate-900" : "text-white/75 hover:text-white"
+            className={`font-mono text-[11px] uppercase tracking-[0.14em] transition-colors ${
+              scrolled ? "text-ink/70 hover:text-cadmium" : "text-paper/70 hover:text-cadmium"
             }`}
           >
             {l.label}
           </a>
         ))}
       </div>
+      <a
+        href="#contact"
+        className={`font-mono text-[11px] uppercase tracking-[0.14em] sm:hidden ${
+          scrolled ? "text-ink" : "text-paper"
+        }`}
+      >
+        04 Contact
+      </a>
     </nav>
   );
 }
