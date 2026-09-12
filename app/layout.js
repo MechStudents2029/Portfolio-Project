@@ -22,7 +22,7 @@ const mono = IBM_Plex_Mono({
 export const metadata = {
   title: "Adam — Portfolio",
   description:
-    "CS + Mechanical Engineering builder — robotic hands, AI agents, and hackathon wins. Ask the AI version of me about any of it.",
+    "The engineer who understands Growth. CUNY TO NYU. Ask the AI version of me about any of it.",
 };
 
 export default function RootLayout({ children }) {

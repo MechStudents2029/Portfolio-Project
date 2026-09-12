@@ -12,8 +12,9 @@ function ProjectRow({ project, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.4, delay: (index % 4) * 0.04 }}
-      className="group grid grid-cols-[auto_1fr] gap-4 border-b border-ink py-6 sm:grid-cols-[3.5rem_auto_1fr_auto] sm:items-start sm:gap-6"
+      className="group grid grid-cols-[auto_auto_1fr] gap-3 border-b border-ink py-6 sm:grid-cols-[auto_3.5rem_auto_1fr_auto] sm:items-start sm:gap-5"
     >
+      <span className="mt-1 h-8 w-1.5 bg-cadmium" aria-hidden />
       <span className="font-mono text-[11px] text-cadmium">{n}</span>
       <div className="hidden sm:block">
         <ProjectIcon kind={project.icon} />
@@ -32,7 +33,7 @@ function ProjectRow({ project, index }) {
           {project.stack.join("  ·  ")}
         </p>
       </div>
-      <div className="col-span-2 self-center sm:col-span-1 sm:pt-1">
+      <div className="col-span-3 self-center sm:col-span-1 sm:pt-1">
         {project.link ? (
           <a
             href={project.link}
@@ -54,16 +55,22 @@ export default function Projects({ projects }) {
   return (
     <section id="projects" className="border-t border-ink bg-paper px-5 py-24 sm:px-8">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-6">
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-cadmium">01 — Projects</p>
-            <h2 className="mt-3 max-w-lg font-display text-[42px] font-extrabold uppercase leading-[0.9] tracking-tight text-ink sm:text-[52px]">
-              Hardware, agents, and the bits between.
-            </h2>
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink pb-5">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center border-2 border-ink bg-cadmium font-display text-[28px] font-extrabold leading-none text-paper">
+              01
+            </div>
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-cadmium">Sheet 01 · Build log</p>
+              <h2 className="mt-1 max-w-lg font-display text-[42px] font-extrabold uppercase leading-[0.9] tracking-tight text-ink sm:text-[52px]">
+                Hardware, agents, and the bits between.
+              </h2>
+            </div>
           </div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-mute">
-            {String(projects.length).padStart(2, "0")} entries
-          </p>
+          <div className="text-right font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
+            <p>DWG-01 · {String(projects.length).padStart(2, "0")} entries</p>
+            <p className="mt-1">REV A · CUT LIST</p>
+          </div>
         </div>
 
         <div>

@@ -14,3 +14,5 @@ out
 
 # superpowers brainstorming artifacts
 .superpowers
+.vercel
+.env*

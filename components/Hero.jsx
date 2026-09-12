@@ -15,15 +15,6 @@ const RoboticHandScene = dynamic(() => import("./RoboticHandScene"), {
 export default function Hero({ profile, onAskClick }) {
   return (
     <section id="top" className="relative min-h-screen w-full overflow-hidden bg-mill pt-16">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.12]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #efe8d8 1px, transparent 1px), linear-gradient(to bottom, #efe8d8 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
       <div className="pointer-events-none absolute left-0 top-0 h-full w-1.5 bg-cadmium" />
 
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl items-stretch gap-6 px-5 py-10 sm:px-8 md:grid-cols-12">
@@ -34,14 +25,14 @@ export default function Hero({ profile, onAskClick }) {
           className="flex flex-col justify-center md:col-span-6"
         >
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-cadmium">
-            {profile.name} — NYU Tandon · CS + ME
+            CUNY TO NYU
           </p>
           <h1 className="mt-5 font-display text-[56px] font-extrabold uppercase leading-[0.86] tracking-tight text-paper sm:text-[84px]">
-            Building
+            the engineer who
             <br />
-            robots that
+            understands
             <br />
-            <span className="text-cadmium">see &amp; move.</span>
+            <span className="text-cadmium">Growth</span>
           </h1>
           <p className="mt-6 max-w-md border-l-2 border-cadmium pl-4 font-sans text-[15px] leading-relaxed text-paper/75">
             {profile.tagline}
@@ -66,10 +57,10 @@ export default function Hero({ profile, onAskClick }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="relative h-[340px] sm:h-[440px] md:col-span-6 md:h-auto"
+          className="relative isolate h-[280px] overflow-hidden sm:h-[360px] md:col-span-6 md:h-auto md:min-h-[520px]"
         >
-          <p className="absolute right-0 top-2 z-10 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
-            FIG. 01 — GESTURE RIG
+          <p className="pointer-events-none absolute right-0 top-2 z-10 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
+            FIG. 01 — SERVO ARM · REV A
           </p>
           <RoboticHandScene />
         </motion.div>

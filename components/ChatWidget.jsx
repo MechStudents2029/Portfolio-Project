@@ -87,16 +87,18 @@ const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="mb-3 flex h-[min(78vh,560px)] w-[min(calc(100vw-2rem),420px)] flex-col border border-ink bg-paper shadow-[6px_6px_0_0_#161410]"
+            className="mb-3 flex h-[min(78vh,560px)] w-[min(calc(100vw-2rem),420px)] flex-col border border-ink bg-paper shadow-[6px_6px_0_0_#161410] max-sm:mb-0"
             role="dialog"
             aria-label={`Ask ${name}`}
           >
             <header className="flex items-center justify-between border-b border-ink bg-mill px-3 py-2.5">
               <div className="flex items-center gap-3">
-                <span className="h-2 w-2 bg-cadmium" aria-hidden />
+                <span className="flex h-8 w-8 items-center justify-center border border-cadmium font-mono text-[9px] text-cadmium">
+                  07
+                </span>
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-cadmium">
-                    Comms · CH-07
+                    Comms · CH-07 · DWG
                   </p>
                   <p className="font-display text-[20px] font-bold uppercase leading-none tracking-tight text-paper">
                     Ask {name}
@@ -125,10 +127,6 @@ const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
                 </button>
               </div>
             </header>
-
-            <p className="border-b border-ink bg-paper px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
-              Ground truth only · no invented specs
-            </p>
 
             <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
               {empty ? (
@@ -211,6 +209,9 @@ const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
               <label htmlFor="comms-input" className="sr-only">
                 Ask a question
               </label>
+              <span className="flex items-center border-r border-ink px-2 font-mono text-[10px] uppercase tracking-[0.14em] text-cadmium">
+                Q
+              </span>
               <input
                 id="comms-input"
                 ref={inputRef}
@@ -239,7 +240,7 @@ const ChatWidget = forwardRef(function ChatWidget({ name }, ref) {
         whileTap={{ x: 0, y: 0 }}
         aria-expanded={open}
         aria-label={open ? "Close chat" : "Open chat"}
-        className="flex items-center gap-3 border border-ink bg-cadmium px-3 py-2.5 text-left text-paper shadow-[4px_4px_0_0_#161410]"
+        className={`${open ? "hidden sm:flex" : "flex"} items-center gap-3 border border-ink bg-cadmium px-3 py-2.5 text-left text-paper shadow-[4px_4px_0_0_#161410]`}
       >
         <span className={`h-2 w-2 bg-paper ${open ? "" : "animate-pulse"}`} />
         <span>

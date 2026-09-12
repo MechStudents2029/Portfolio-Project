@@ -28,10 +28,11 @@ export default function Nav({ name }) {
     >
       <a
         href="#top"
-        className={`font-mono text-[11px] uppercase tracking-[0.22em] ${
+        className={`flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] ${
           scrolled ? "text-ink" : "text-paper"
         }`}
       >
+        <span className="h-3 w-1.5 bg-cadmium" aria-hidden />
         {name} / DWG-01
       </a>
       <div className="hidden items-center gap-6 sm:flex">
